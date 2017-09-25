@@ -56,11 +56,11 @@ def main():
     model.add(Dense(128, activation='relu'))
     model.add(Dense(128, activation='relu'))
     model.add(Dense(act_data.shape[2], activation='linear'))
-    model.compile(loss='msle', optimizer='adam', metrics=['accuracy'])
+    model.compile(loss='mse', optimizer='adam', metrics=['mse'])
     model.save('models/' + task + '_dagger_model.h5')
 
     # Main DAGGER Loop
-    for i in range(5):
+    for i in range(20):
         # 1) Train policy on D
         # Split data into train and test set
         n = obs_data.shape[0]
@@ -103,7 +103,7 @@ def main():
                 while not done:
                     obs = np.array(obs)
                     exp_action = policy_fn(obs[None,:])
-                    obs = obs.reshape(1, len(obs), 1)
+                    obs = obs.reshape(1, len(obs))
                     action = (model.predict(obs, batch_size=64, verbose=0))
 
                     new_observations.append(obs)

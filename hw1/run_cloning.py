@@ -69,14 +69,15 @@ def main():
     Y_test = y_test.reshape(y_test.shape[0], act_data.shape[2])
 
     # Create a feedforward neural network
+
     model = Sequential()
     model.add(Dense(128, activation='relu', input_shape=(obs_data.shape[1],)))
     model.add(Dense(128, activation='relu'))
     model.add(Dense(128, activation='relu'))
     model.add(Dense(act_data.shape[2], activation='linear'))
 
-    model.compile(loss='msle', optimizer='adam', metrics=['accuracy'])
-    model.fit(X_train, Y_train, batch_size=64, nb_epoch=30, verbose=1)
+    model.compile(loss='mse', optimizer='adam', metrics=['mse'])
+    model.fit(X_train, Y_train, batch_size=64, nb_epoch=300, verbose=1)
     score = model.evaluate(X_test, Y_test, verbose=1)
 
     model.save('models/' + task + '_cloned_model.h5')
@@ -100,8 +101,9 @@ def main():
             while not done:
                 obs = np.array(obs)
                 exp_action = policy_fn(obs[None,:])
-                obs = obs.reshape(1, len(obs), 1)
+                obs = obs.reshape(1, len(obs))
                 action = (model.predict(obs, batch_size=64, verbose=0))
+
                 # print 'obs: ' + str(obs)
                 # print "predicted: " + str(action)
                 # print "expert: " + str(exp_action)
